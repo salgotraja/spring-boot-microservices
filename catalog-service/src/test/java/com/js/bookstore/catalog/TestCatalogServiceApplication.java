@@ -1,4 +1,4 @@
-package com.js;
+package com.js.bookstore.catalog;
 
 import org.springframework.boot.SpringApplication;
 
