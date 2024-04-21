@@ -2,16 +2,22 @@ package com.js.bookstore.orders.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.js.bookstore.orders.ApplicationProperties;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public class RabbitMQConfig {
+@Configuration
+class RabbitMQConfig {
     private final ApplicationProperties properties;
 
-    public RabbitMQConfig(ApplicationProperties properties) {
+    RabbitMQConfig(ApplicationProperties properties) {
         this.properties = properties;
     }
 
@@ -27,9 +33,7 @@ public class RabbitMQConfig {
 
     @Bean
     Binding newOrdersQueueBinding() {
-        return BindingBuilder.bind(newOrdersQueue())
-                .to(exchange())
-                .with(properties.newOrdersQueue());
+        return BindingBuilder.bind(newOrdersQueue()).to(exchange()).with(properties.newOrdersQueue());
     }
 
     @Bean
@@ -39,9 +43,7 @@ public class RabbitMQConfig {
 
     @Bean
     Binding deliveredOrdersQueueBinding() {
-        return BindingBuilder.bind(deliveredOrdersQueue())
-                .to(exchange())
-                .with(properties.deliveredOrdersQueue());
+        return BindingBuilder.bind(deliveredOrdersQueue()).to(exchange()).with(properties.deliveredOrdersQueue());
     }
 
     @Bean
@@ -51,9 +53,7 @@ public class RabbitMQConfig {
 
     @Bean
     Binding cancelledOrdersQueueBinding() {
-        return BindingBuilder.bind(cancelledOrdersQueue())
-                .to(exchange())
-                .with(properties.cancelledOrdersQueue());
+        return BindingBuilder.bind(cancelledOrdersQueue()).to(exchange()).with(properties.cancelledOrdersQueue());
     }
 
     @Bean
@@ -63,9 +63,7 @@ public class RabbitMQConfig {
 
     @Bean
     Binding errorOrdersQueueBinding() {
-        return BindingBuilder.bind(errorOrdersQueue())
-                .to(exchange())
-                .with(properties.errorOrdersQueue());
+        return BindingBuilder.bind(errorOrdersQueue()).to(exchange()).with(properties.errorOrdersQueue());
     }
 
     @Bean
@@ -75,6 +73,7 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 
+    @Bean
     public Jackson2JsonMessageConverter jacksonConverter(ObjectMapper mapper) {
         return new Jackson2JsonMessageConverter(mapper);
     }
