@@ -1,0 +1,23 @@
+POST http://localhost:8082/send
+Content-Type: application/json
+
+
+{
+  "routingKey": "delivered-orders",
+  "payload": {
+    "content": "Order created with id-1234"
+  }
+}
+
+###
+POST http://localhost:8082/send
+Content-Type: application/json
+
+{
+  "routingKey": "new-orders",
+  "payload": {
+    "content": "Order created with id-1234"
+  }
+}
+
+
