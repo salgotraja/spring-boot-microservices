@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.js</groupId>
 	<artifactId>order-service</artifactId>
@@ -20,6 +20,7 @@
 		<springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 		<spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
 		<dockerImageName>salgotraja/bookstore-${project.artifactId}</dockerImageName>
+		<instancio.version>4.5.0</instancio.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -50,7 +51,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -105,6 +105,12 @@
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.instancio</groupId>
+			<artifactId>instancio-junit</artifactId>
+			<version>${instancio.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
