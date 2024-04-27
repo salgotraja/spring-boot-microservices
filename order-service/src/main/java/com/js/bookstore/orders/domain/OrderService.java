@@ -3,12 +3,11 @@ package com.js.bookstore.orders.domain;
 import com.js.bookstore.orders.domain.models.CreateOrderRequest;
 import com.js.bookstore.orders.domain.models.CreateOrderResponse;
 import com.js.bookstore.orders.domain.models.OrderCreatedEvent;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -37,6 +36,4 @@ public class OrderService {
         orderEventService.save(orderCreatedEvent);
         return new CreateOrderResponse(savedOrder.getOrderNumber());
     }
-
-    
 }

@@ -13,7 +13,6 @@ class OrderEventPublisher {
     private final RabbitTemplate rabbitTemplate;
     private final ApplicationProperties properties;
 
-
     OrderEventPublisher(RabbitTemplate rabbitTemplate, ApplicationProperties properties) {
         this.rabbitTemplate = rabbitTemplate;
         this.properties = properties;

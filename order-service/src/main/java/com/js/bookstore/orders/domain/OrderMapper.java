@@ -4,7 +4,6 @@ import com.js.bookstore.orders.domain.models.CreateOrderRequest;
 import com.js.bookstore.orders.domain.models.OrderDTO;
 import com.js.bookstore.orders.domain.models.OrderItem;
 import com.js.bookstore.orders.domain.models.OrderStatus;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,7 +18,7 @@ class OrderMapper {
         newOrder.setDeliveryAddress(request.deliveryAddress());
 
         Set<OrderItemEntity> orderItems = new HashSet<>();
-        for(OrderItem item : request.items()) {
+        for (OrderItem item : request.items()) {
             OrderItemEntity orderItem = new OrderItemEntity();
             orderItem.setCode(item.code());
             orderItem.setName(item.name());
@@ -46,7 +45,6 @@ class OrderMapper {
                 order.getDeliveryAddress(),
                 order.getStatus(),
                 order.getComments(),
-                order.getCreatedAt()
-        );
+                order.getCreatedAt());
     }
 }
