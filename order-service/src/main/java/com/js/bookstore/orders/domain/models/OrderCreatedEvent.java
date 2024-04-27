@@ -9,4 +9,4 @@ public record OrderCreatedEvent(
         Set<OrderItem> items,
         Customer customer,
         Address deliveryAddress,
-        LocalDateTime createdAt) { }
+        LocalDateTime createdAt) {}

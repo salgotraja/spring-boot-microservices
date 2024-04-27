@@ -4,11 +4,10 @@ import com.js.bookstore.orders.clients.catalog.Product;
 import com.js.bookstore.orders.clients.catalog.ProductServiceClient;
 import com.js.bookstore.orders.domain.models.CreateOrderRequest;
 import com.js.bookstore.orders.domain.models.OrderItem;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 class OrderValidator {
@@ -22,10 +21,10 @@ class OrderValidator {
 
     void validate(CreateOrderRequest request) {
         Set<OrderItem> items = request.items();
-        for(OrderItem item : items) {
+        for (OrderItem item : items) {
             Product product = client.getProductByCode(item.code())
                     .orElseThrow(() -> new InvalidOrderException("Invalid Product code: " + item.code()));
-            if(item.price().compareTo(product.price()) != 0) {
+            if (item.price().compareTo(product.price()) != 0) {
                 log.error(
                         "Product price not matching. Actual price:{}, received price:{}",
                         product.price(),

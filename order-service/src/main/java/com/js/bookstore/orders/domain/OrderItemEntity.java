@@ -1,7 +1,6 @@
 package com.js.bookstore.orders.domain;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 
 @Entity

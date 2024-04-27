@@ -16,7 +16,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final URI BAD_REQUEST_TYPE = URI.create("https://api.bookstore.com/errors/bad-request");
     private static final String SERVICE_NAME = "order-service";
 
-
     @ExceptionHandler(Exception.class)
     ProblemDetail handleUnhandledException(Exception e) {
         ProblemDetail problemDetail =
@@ -40,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-   /* @ExceptionHandler(InvalidOrderException.class)
+    /* @ExceptionHandler(InvalidOrderException.class)
     ProblemDetail handleInvalidOrderException(InvalidOrderException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
         problemDetail.setTitle("Invalid Order Creation Request");
