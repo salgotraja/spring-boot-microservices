@@ -1,12 +1,17 @@
 package com.js.bookstore.orders.web.exception;
 
+import com.js.bookstore.orders.domain.InvalidOrderException;
 import com.js.bookstore.orders.domain.OrderNotFoundException;
+import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.time.Instant;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.http.*;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
@@ -39,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    /* @ExceptionHandler(InvalidOrderException.class)
+    @ExceptionHandler(InvalidOrderException.class)
     ProblemDetail handleInvalidOrderException(InvalidOrderException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
         problemDetail.setTitle("Invalid Order Creation Request");
@@ -67,5 +72,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("error_category", "Generic");
         problemDetail.setProperty("timestamp", Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
-    }*/
+    }
 }
