@@ -1,13 +1,14 @@
 package com.js.bookstore.orders.web.controllers;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.notNullValue;
+
 import com.js.bookstore.orders.AbstractIT;
+import com.js.bookstore.orders.testdata.TestDataFactory;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.notNullValue;
 
 class OrderControllerTests extends AbstractIT {
     @Nested
@@ -48,6 +49,17 @@ class OrderControllerTests extends AbstractIT {
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
                     .body("orderNumber", notNullValue());
+        }
+
+        @Test
+        void shouldReturnBadRequestWhenMandatoryDataIsMissing() {
+            var payload = TestDataFactory.createOrderRequestWithInvalidCustomer();
+            given().contentType(ContentType.JSON)
+                    .body(payload)
+                    .when()
+                    .post("/api/orders")
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value());
         }
     }
 }
