@@ -1,0 +1,26 @@
+POST http://localhost:8082/api/orders
+Content-Type: application/json
+
+{
+  "customer" : {
+    "name": "Jagdish",
+    "email": "jagdish@gmail.com",
+    "phone": "999999999"
+  },
+  "deliveryAddress" : {
+    "addressLine1": "Birkelweg",
+    "addressLine2": "Hans-Edenhofer-Straße 23",
+    "city": "Berlin",
+    "state": "Berlin",
+    "zipCode": "94258",
+    "country": "Germany"
+  },
+  "items": [
+    {
+      "code": "P100",
+      "name": "Product 1",
+      "price": 25.50,
+      "quantity": 1
+    }
+  ]
+}
