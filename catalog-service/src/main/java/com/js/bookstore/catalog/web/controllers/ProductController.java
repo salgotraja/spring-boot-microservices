@@ -23,7 +23,7 @@ class ProductController {
 
     @GetMapping("/{code}")
     ResponseEntity<Product> getProductByCode(@PathVariable String code) {
-       // sleep();
+        // sleep();
         return productService
                 .getProductByCode(code)
                 .map(ResponseEntity::ok)
