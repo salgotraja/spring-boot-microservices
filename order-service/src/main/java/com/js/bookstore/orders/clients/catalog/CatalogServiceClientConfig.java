@@ -14,9 +14,10 @@ class CatalogServiceClientConfig {
     RestClient restClient(ApplicationProperties properties) {
         return RestClient.builder()
                 .baseUrl(properties.catalogServiceUrl())
-                .requestFactory(ClientHttpRequestFactories.get(ClientHttpRequestFactorySettings.DEFAULTS
-                        .withConnectTimeout(Duration.ofSeconds(5))
-                        .withReadTimeout(Duration.ofSeconds(5))))
+                .requestFactory(ClientHttpRequestFactories
+                        .get(ClientHttpRequestFactorySettings.DEFAULTS
+                                .withConnectTimeout(Duration.ofSeconds(5))
+                                .withReadTimeout(Duration.ofSeconds(5))))
                 .build();
     }
 }

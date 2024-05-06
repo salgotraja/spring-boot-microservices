@@ -54,6 +54,7 @@ class OrderControllerTests extends AbstractIT {
         @Test
         void shouldReturnBadRequestWhenMandatoryDataIsMissing() {
             var payload = TestDataFactory.createOrderRequestWithInvalidCustomer();
+            System.out.println(payload);
             given().contentType(ContentType.JSON)
                     .body(payload)
                     .when()
