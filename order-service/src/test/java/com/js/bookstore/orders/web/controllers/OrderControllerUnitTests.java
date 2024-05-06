@@ -43,12 +43,12 @@ class OrderControllerUnitTests {
         given(securityService.getLoginUserName()).willReturn("Jagdish");
     }
 
-    @ParameterizedTest(name = "[{index}-{0}]")
+    @ParameterizedTest(name = "[{index}]-{0}")
     @MethodSource("createOrderRequestProvider")
     void shouldReturnBadRequestWhenOrderPayloadIsInvalid(CreateOrderRequest request) throws Exception {
-        System.out.println(request);
         given(orderService.createOrder(eq("Jagdish"), any(CreateOrderRequest.class)))
                 .willReturn(null);
+
         mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
