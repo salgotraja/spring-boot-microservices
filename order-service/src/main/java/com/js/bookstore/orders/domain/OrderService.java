@@ -2,6 +2,7 @@ package com.js.bookstore.orders.domain;
 
 import com.js.bookstore.orders.domain.models.CreateOrderRequest;
 import com.js.bookstore.orders.domain.models.CreateOrderResponse;
+import com.js.bookstore.orders.domain.models.OrderCreatedEvent;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,8 @@ public class OrderService {
         newOrder.setUserName(userName);
         OrderEntity savedOrder = this.orderRepository.save(newOrder);
         log.info("Created order with orderNumber: {}", savedOrder.getOrderNumber());
-        /*OrderCreatedEvent orderCreatedEvent = OrderEventMapper.buildOrderCreatedEvent(savedOrder);
-        orderEventService.save(orderCreatedEvent);*/
+        OrderCreatedEvent orderCreatedEvent = OrderEventMapper.buildOrderCreatedEvent(savedOrder);
+        orderEventService.save(orderCreatedEvent);
         return new CreateOrderResponse(savedOrder.getOrderNumber());
     }
 }
