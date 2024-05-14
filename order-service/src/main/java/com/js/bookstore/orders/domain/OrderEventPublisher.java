@@ -19,6 +19,7 @@ class OrderEventPublisher {
     }
 
     public void publish(OrderCreatedEvent event) {
+        System.out.println("EVENT: " + event);
         this.send(properties.newOrdersQueue(), event);
     }
 

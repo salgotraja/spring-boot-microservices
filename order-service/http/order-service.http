@@ -8,18 +8,18 @@ Content-Type: application/json
     "phone": "999999999"
   },
   "deliveryAddress" : {
-    "addressLine1": "Birkelweg",
-    "addressLine2": "Hans-Edenhofer-Straße 23",
-    "city": "Berlin",
-    "state": "Berlin",
-    "zipCode": "94258",
-    "country": "Germany"
+    "addressLine1": "Mahagun",
+    "addressLine2": "Housing",
+    "city": "Noida",
+    "state": "UP",
+    "zipCode": "201309",
+    "country": "India"
   },
   "items": [
     {
       "code": "P100",
       "name": "Product 1",
-      "price": 25.50,
+      "price": 34.0,
       "quantity": 1
     }
   ]

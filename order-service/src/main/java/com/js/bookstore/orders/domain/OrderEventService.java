@@ -114,6 +114,7 @@ public class OrderEventService {
 
     private <T> T fromJsonPayload(String json, Class<T> type) {
         try {
+            log.info("json payload received: {}", json);
             return objectMapper.readValue(json, type);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
