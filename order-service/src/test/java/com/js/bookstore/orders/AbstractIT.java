@@ -1,6 +1,7 @@
 package com.js.bookstore.orders;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
