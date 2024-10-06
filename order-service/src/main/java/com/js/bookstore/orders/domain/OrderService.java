@@ -54,5 +54,27 @@ public class OrderService {
         }
     }
 
-    private void process(OrderEntity order) {}
+    private void process(OrderEntity order) {
+        try {
+            if (canBeDelivered(order)) {
+                log.info("OrderNumber: {} can be delivered", order.getOrderNumber());
+                orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.DELIVERED);
+                orderEventService.save(OrderEventMapper.buildOrderDeliveredEvent(order));
+            } else {
+                log.info("OrderNumber: {} can't be delivered", order.getOrderNumber());
+                orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.CANCELLED);
+                orderEventService.save(
+                        OrderEventMapper.buildOrderCancelledEvent(order, "Can't deliver to the location"));
+            }
+        } catch (RuntimeException e) {
+            log.error("Failed to process Order with orderNumber {}", order.getOrderNumber(), e);
+            orderRepository.updateOrderStatus(order.getOrderNumber(), OrderStatus.ERROR);
+            orderEventService.save(OrderEventMapper.buildOrderErrorEvent(order, e.getMessage()));
+        }
+    }
+
+    private boolean canBeDelivered(OrderEntity order) {
+        return DELIVERY_ALLOWED_COUNTRIES.contains(
+                order.getDeliveryAddress().country().toUpperCase());
+    }
 }
