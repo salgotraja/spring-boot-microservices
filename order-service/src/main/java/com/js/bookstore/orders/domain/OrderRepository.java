@@ -30,7 +30,7 @@ interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query(
             """
-           SELECT o
+           SELECT distinct o
            FROM OrderEntity o LEFT JOIN FETCH o.items
            WHERE o.userName = :userName AND o.orderNumber = :orderNumber
           """)
