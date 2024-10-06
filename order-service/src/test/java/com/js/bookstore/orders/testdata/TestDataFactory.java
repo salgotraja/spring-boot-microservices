@@ -50,4 +50,14 @@ public class TestDataFactory {
                 .set(field(CreateOrderRequest::items), Set.of())
                 .create();
     }
+
+    public static Address createValidAddress() {
+        return Instancio.of(Address.class)
+                .set(field(Address::addressLine1), "123 Main Street")
+                .set(field(Address::city), "City")
+                .set(field(Address::state), "State")
+                .set(field(Address::zipCode), "123456")
+                .set(field(Address::country), "India")
+                .create();
+    }
 }
