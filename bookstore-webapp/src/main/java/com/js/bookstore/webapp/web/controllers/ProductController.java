@@ -21,6 +21,11 @@ class ProductController {
         this.catalogServiceClient = catalogServiceClient;
     }
 
+    @GetMapping
+    String index() {
+        return "redirect:/products";
+    }
+
     @GetMapping("/products")
     String showProductsPage(@RequestParam(name = "page", defaultValue = "1") int page, Model model) {
         model.addAttribute("pageNo", page);
