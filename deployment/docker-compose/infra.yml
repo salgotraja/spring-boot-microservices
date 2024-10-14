@@ -84,10 +84,12 @@ services:
       - "8025:8025"
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.0
-    command: ['start-dev', '--http-port=9191']
+    image: quay.io/keycloak/keycloak:24.0.2
+    command: ['start-dev', '--import-realm', '--http-port=9191']
     container_name: keycloak
     hostname: keycloak
+    volumes:
+      - ./realm-config:/opt/keycloak/data/import
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin1234
