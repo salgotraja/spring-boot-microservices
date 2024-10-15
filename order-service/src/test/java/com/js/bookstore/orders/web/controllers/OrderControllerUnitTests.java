@@ -10,11 +10,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.js.bookstore.orders.WithMockOAuth2User;
 import com.js.bookstore.orders.domain.OrderService;
 import com.js.bookstore.orders.domain.SecurityService;
 import com.js.bookstore.orders.domain.models.*;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(OrderController.class)
@@ -57,11 +60,13 @@ class OrderControllerUnitTests {
 
     @ParameterizedTest(name = "[{index}]-{0}")
     @MethodSource("createOrderRequestProvider")
+    @WithMockUser
     void shouldReturnBadRequestWhenOrderPayloadIsInvalid(CreateOrderRequest request) throws Exception {
         given(orderService.createOrder(eq("Jagdish"), any(CreateOrderRequest.class)))
                 .willReturn(null);
 
         mockMvc.perform(post("/api/orders")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -75,6 +80,7 @@ class OrderControllerUnitTests {
     }
 
     @Test
+    @WithMockOAuth2User(username = "user")
     void shouldReturnOrdersSuccessfully() throws Exception {
         List<OrderSummary> orders = List.of(
                 new OrderSummary("order-001", OrderStatus.NEW), new OrderSummary("order-002", OrderStatus.IN_PROCESS));
@@ -94,6 +100,7 @@ class OrderControllerUnitTests {
     }
 
     @Test
+    @WithMockOAuth2User(username = "user")
     void shouldReturnOrderSuccessfully() throws Exception {
         String orderNumber = "order-123";
         Customer customer = new Customer("John Doe", "john.doe@example.com", "1234567890");
@@ -121,6 +128,7 @@ class OrderControllerUnitTests {
     }
 
     @Test
+    @WithMockOAuth2User(username = "user")
     void shouldThrowOrderNotFoundExceptionWhenOrderDoesNotExist() throws Exception {
         // Arrange
         String orderNumber = "invalid-order-123";

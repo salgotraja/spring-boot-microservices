@@ -5,7 +5,6 @@ import com.js.bookstore.webapp.services.SecurityHelper;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,6 @@ class OrderController {
 
     private final OrderServiceClient orderServiceClient;
     private final SecurityHelper securityHelper;
-
 
     OrderController(OrderServiceClient orderServiceClient, SecurityHelper securityHelper) {
         this.orderServiceClient = orderServiceClient;
