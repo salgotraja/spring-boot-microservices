@@ -7,8 +7,8 @@ insert into orders (id,order_number,username,
                     delivery_address_line1,delivery_address_line2,delivery_address_city,
                     delivery_address_state,delivery_address_zip_code,delivery_address_country,
                     status,comments) values
-(1, 'order-123', 'user', 'Jagdish', 'jagdish@gmail.com', '11111111', '2206 Mant', '2206', 'New Delhi', 'DL', '75001', 'India', 'NEW', null),
-(2, 'order-456', 'user', 'Gul', 'gul@gmail.com', '2222222', '123 Main St', 'Apt 1', 'Gurgaon', 'TS', '500072', 'India', 'IN_PROCESS', null)
+(1, 'order-123', 'jagdish', 'Jagdish', 'jagdish@gmail.com', '11111111', '2206 Mant', '2206', 'New Delhi', 'DL', '75001', 'India', 'NEW', null),
+(2, 'order-456', 'jagdish', 'Jagdish', 'salgotra@outlook.com', '2222222', '123 Main St', 'Apt 1', 'Gurgaon', 'TS', '500072', 'India', 'IN_PROCESS', null)
 ;
 
 insert into order_items(order_id, code, name, price, quantity) values
