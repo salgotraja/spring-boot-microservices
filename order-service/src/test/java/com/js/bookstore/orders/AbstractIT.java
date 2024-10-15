@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.OAuth2Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,7 @@ import org.wiremock.integrations.testcontainers.WireMockContainer;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(ContainersConfig.class)
+@AutoConfigureMockMvc
 public abstract class AbstractIT {
     static final String CLIENT_ID = "bookstore-webapp";
     static final String CLIENT_SECRET = "cWaxi5fTq5CRHP4uUJrmD6d54ianygxu";
@@ -42,6 +45,9 @@ public abstract class AbstractIT {
 
     @LocalServerPort
     int port;
+
+    @Autowired
+    protected MockMvc mockMvc;
 
     static WireMockContainer wiremockServer = new WireMockContainer("wiremock/wiremock:3.5.2-alpine");
 
@@ -100,5 +106,4 @@ public abstract class AbstractIT {
     }
 
     record KeyCloakToken(@JsonProperty("access_token") String accessToken) {}
-
 }

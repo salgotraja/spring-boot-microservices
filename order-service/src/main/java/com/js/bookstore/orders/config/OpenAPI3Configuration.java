@@ -1,8 +1,10 @@
 package com.js.bookstore.orders.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.*;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +17,29 @@ class OpenAPI3Configuration {
     @Value("${swagger.api-gateway-url}")
     String apiGatewayUrl;
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    String issuerUri;
+
     @Bean
     OpenAPI openApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Catalog Service APIs")
-                        .description("BookStore Catalog Service APIs")
+                        .title("Order Service APIs")
+                        .description("BookStore Order Service APIs")
                         .version("v1.0.0")
                         .contact(new Contact().name("Jagdish Salgotra").email("jagdishsal@gmail.com")))
-                .servers(List.of(new Server().url(apiGatewayUrl)));
+                .servers(List.of(new Server().url(apiGatewayUrl)))
+                .addSecurityItem(new SecurityRequirement().addList("Authorization"))
+                .components(new Components()
+                        .addSecuritySchemes(
+                                "security_auth",
+                                new SecurityScheme()
+                                        .in(SecurityScheme.In.HEADER)
+                                        .type(SecurityScheme.Type.OAUTH2)
+                                        .flows(new OAuthFlows()
+                                                .authorizationCode(new OAuthFlow()
+                                                        .authorizationUrl(issuerUri + "/protocol/openid-connect/auth")
+                                                        .tokenUrl(issuerUri + "/protocol/openid-connect/token")
+                                                        .scopes(new Scopes().addString("openid", "openid scope"))))));
     }
 }

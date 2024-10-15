@@ -543,8 +543,8 @@
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "secret" : "cWaxi5fTq5CRHP4uUJrmD6d54ianygxu",
-    "redirectUris" : [ "http://localhost:8080/login/oauth2/code/bookstore-webapp" ],
-    "webOrigins" : [ "http://localhost:8080" ],
+    "redirectUris" : [ "http://localhost:8989/webjars/swagger-ui/oauth2-redirect.html", "http://localhost:8080/login/oauth2/code/bookstore-webapp" ],
+    "webOrigins" : [ "http://localhost:8080", "http://localhost:8989" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -1236,7 +1236,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-usermodel-property-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "af3ff266-446a-4244-87ca-6b0f5a677ed2",
@@ -1254,7 +1254,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
