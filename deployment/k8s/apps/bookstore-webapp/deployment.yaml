@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-webapp
+  namespace: bookstore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookstore-webapp
+  template:
+    metadata:
+      labels:
+        app: bookstore-webapp
+    spec:
+      containers:
+        - name: bookstore-webapp
+          image: salgotraja/bookstore-webapp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: kubernetes
+            - name: BOOKSTORE_API_GATEWAY_URL
+              value: http://api-gateway:8989
+            - name: OAUTH2_SERVER_URL
+              value: http://keycloak:9191
+            - name: MANAGEMENT_TRACING_ENABLED
+              value: "true"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://tempo.monitoring:9411
