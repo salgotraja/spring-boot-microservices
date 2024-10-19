@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: bookstore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: salgotraja/bookstore-api-gateway
+          ports:
+            - containerPort: 8989
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: kubernetes
+            - name: CATALOG_SERVICE_URL
+              value: http://catalog-service:8081
+            - name: ORDER_SERVICE_URL
+              value: http://order-service:8082
+            - name: MANAGEMENT_TRACING_ENABLED
+              value: "true"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://tempo.monitoring:9411
