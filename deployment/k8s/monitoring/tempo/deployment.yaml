@@ -1,26 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
-  labels:
-    app: title
+  name: tempo
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: title
+      app: tempo
   template:
     metadata:
-      name: title
       labels:
-        app: title
+        app: tempo
     spec:
       containers:
-        - name: title
-          image: nginx
-          imagePullPolicy: IfNotPresent
+        - name: tempo
+          image: grafana/tempo:2.4.1
+          args:
+            - "-config.file=/etc/tempo-config.yml"
           ports:
-            - containerPort: 80
-              protocol: TCP
-      restartPolicy: Always
-      
+            - containerPort: 3200
+            - containerPort: 9411
+          volumeMounts:
+            - name: config
+              mountPath: /etc/tempo-config.yml
+              subPath: tempo.yml
+      volumes:
+        - name: config
+          configMap:
+            name: tempo-config

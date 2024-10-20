@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
-  labels:
-    app: title
+  name: rabbitmq
+  namespace: bookstore
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: title
+      app: rabbitmq
   template:
     metadata:
-      name: title
       labels:
-        app: title
+        app: rabbitmq
     spec:
       containers:
-        - name: title
-          image: nginx
-          imagePullPolicy: IfNotPresent
+        - name: rabbitmq
+          image: rabbitmq:3.12.11-management
           ports:
-            - containerPort: 80
-              protocol: TCP
-      restartPolicy: Always
-      
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: guest
+            - name: RABBITMQ_DEFAULT_PASS
+              value: guest

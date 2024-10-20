@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
 
 echo "Initializing Kubernetes cluster..."
 
 kind create cluster --name bookstore --config kind-config.yaml
 
+echo "Waiting for cluster to be ready..."
+kubectl wait --for=condition=Ready nodes --all --timeout=300s
+
+echo "Creating namespaces..."
 kubectl create namespace bookstore
 kubectl create namespace monitoring
 kubectl create namespace ingress-nginx
-
 
 echo "\n-----------------------------------------------------\n"
 
@@ -19,12 +24,10 @@ echo "\n-----------------------------------------------------\n"
 
 echo "Waiting for NGINX Ingress to be ready..."
 
-sleep 10
-
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
-  --timeout=180s
+  --timeout=300s
 
 echo "\n"
 

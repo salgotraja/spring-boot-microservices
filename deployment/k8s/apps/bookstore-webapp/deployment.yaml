@@ -13,6 +13,10 @@ spec:
       labels:
         app: bookstore-webapp
     spec:
+      initContainers:
+        - name: wait-for-keycloak
+          image: curlimages/curl:7.78.0
+          command: [ 'sh', '-c', 'until curl -s http://keycloak:9191 > /dev/null; do echo waiting for keycloak; sleep 2; done;' ]
       containers:
         - name: bookstore-webapp
           image: salgotraja/bookstore-webapp
@@ -28,4 +32,16 @@ spec:
             - name: MANAGEMENT_TRACING_ENABLED
               value: "true"
             - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              value: http://tempo.monitoring:9411
+              value: http://tempo:9411
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10

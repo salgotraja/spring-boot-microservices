@@ -28,4 +28,16 @@ spec:
             - name: MANAGEMENT_TRACING_ENABLED
               value: "true"
             - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              value: http://tempo.monitoring:9411
+              value: http://tempo:9411
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8989
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8989
+            initialDelaySeconds: 60
+            periodSeconds: 10
