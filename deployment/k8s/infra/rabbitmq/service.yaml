@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: title
+  name: rabbitmq
+  namespace: bookstore
 spec:
   selector:
-    app: title
+    app: rabbitmq
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: NodePort
-  
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672

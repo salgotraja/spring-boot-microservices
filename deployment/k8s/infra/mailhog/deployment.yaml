@@ -1,26 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
-  labels:
-    app: title
+  name: mailhog
+  namespace: bookstore
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: title
+      app: mailhog
   template:
     metadata:
-      name: title
       labels:
-        app: title
+        app: mailhog
     spec:
       containers:
-        - name: title
-          image: nginx
-          imagePullPolicy: IfNotPresent
+        - name: mailhog
+          image: mailhog/mailhog:v1.0.1
           ports:
-            - containerPort: 80
-              protocol: TCP
-      restartPolicy: Always
-      
+            - containerPort: 1025
+            - containerPort: 8025

@@ -8,6 +8,7 @@ vars:
   APPS_DC_FILE: "{{.DC_DIR}}/apps.yml"
   MONITORING_DC_FILE: "{{.DC_DIR}}/monitoring.yml"
   SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
+  K8S_DIR: "deployment/k8s"
 
 tasks:
   default:
@@ -75,6 +76,67 @@ tasks:
       - task: stop
       - task: sleep
       - task: start
+
+  k8s:apply:
+    desc: Apply all Kubernetes configurations
+    cmds:
+      - kubectl apply -f {{.K8S_DIR}}/infra/namespace.yaml
+      - kubectl apply -f {{.K8S_DIR}}/infra
+      - for file in {{.K8S_DIR}}/apps/*/deployment.yaml; do kubectl apply -f "$file"; done
+      - for file in {{.K8S_DIR}}/apps/*/service.yaml; do kubectl apply -f "$file"; done
+      - kubectl apply -f {{.K8S_DIR}}/monitoring
+      - kubectl apply -f {{.K8S_DIR}}/ingress
+    silent: false
+
+  k8s:build-load:
+    desc: Build Docker images and load them into Kind cluster
+    cmds:
+      - task: build
+      - kind load docker-image salgotraja/bookstore-catalog-service
+      - kind load docker-image salgotraja/bookstore-order-service
+      - kind load docker-image salgotraja/bookstore-notification-service
+      - kind load docker-image salgotraja/bookstore-api-gateway
+      - kind load docker-image salgotraja/bookstore-webapp
+    silent: false
+
+  k8s:delete:
+    desc: Delete all Kubernetes resources
+    cmds:
+      - kubectl delete -f {{.K8S_DIR}}/ingress
+      - kubectl delete -f {{.K8S_DIR}}/apps
+      - kubectl delete -f {{.K8S_DIR}}/monitoring
+      - kubectl delete -f {{.K8S_DIR}}/infra
+      - kubectl delete -f {{.K8S_DIR}}/infra/namespace.yaml
+    silent: false
+
+  k8s:wait:
+    desc: Wait for all pods to be ready
+    cmds:
+      - kubectl wait --for=condition=ready pod --all -n bookstore --timeout=300s
+      - kubectl wait --for=condition=ready pod --all -n monitoring --timeout=300s
+    silent: false
+
+  k8s:status:
+    desc: Check the status of all pods
+    cmds:
+      - kubectl get pods -n bookstore
+      - kubectl get pods -n monitoring
+    silent: false
+
+  k8s:logs:
+    desc: Tail logs from all pods in the bookstore namespace
+    cmds:
+      - kubectl logs -f -l app -n bookstore --all-containers=true --since=10m
+    silent: false
+
+  k8s:deploy:
+    desc: Deploy the entire application stack to Kubernetes
+    cmds:
+      - task: k8s:build-load
+      - task: k8s:apply
+      - task: k8s:wait
+      - task: k8s:status
+    silent: false
 
   sleep:
     vars:

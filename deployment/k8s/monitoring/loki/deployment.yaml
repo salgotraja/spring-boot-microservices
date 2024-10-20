@@ -1,26 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
-  labels:
-    app: title
+  name: loki
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: title
+      app: loki
   template:
     metadata:
-      name: title
       labels:
-        app: title
+        app: loki
     spec:
       containers:
-        - name: title
-          image: nginx
-          imagePullPolicy: IfNotPresent
+        - name: loki
+          image: grafana/loki:3.0.0
           ports:
-            - containerPort: 80
-              protocol: TCP
-      restartPolicy: Always
-      
+            - containerPort: 3100
+          args:
+            - -config.file=/etc/loki/local-config.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+      volumes:
+        - name: config
+          configMap:
+            name: loki-config

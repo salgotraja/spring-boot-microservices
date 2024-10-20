@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: title
+  name: mailhog
+  namespace: bookstore
 spec:
   selector:
-    app: title
+    app: mailhog
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: NodePort
-  
+    - name: smtp
+      port: 1025
+      targetPort: 1025
+    - name: http
+      port: 8025
+      targetPort: 8025
