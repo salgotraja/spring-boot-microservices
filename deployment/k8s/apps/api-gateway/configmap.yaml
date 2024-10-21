@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: bookstore
+data:
+  application.yml: |
+    spring:
+      cloud:
+        gateway:
+          routes:
+            - id: catalog-service
+              uri: http://catalog-service:8081
+              predicates:
+                - Path=/catalog/**
+            - id: order-service
+              uri: http://order-service:8082
+              predicates:
+                - Path=/orders/**
+    management:
+      zipkin:
+        tracing:
+          endpoint: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
