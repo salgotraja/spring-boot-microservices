@@ -13,17 +13,41 @@ spec:
       labels:
         app: loki
     spec:
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
       containers:
         - name: loki
           image: grafana/loki:3.0.0
+          args:
+            - "-config.file=/etc/loki/local-config.yaml"
+            - "-validation.allow-structured-metadata=false"
           ports:
             - containerPort: 3100
-          args:
-            - -config.file=/etc/loki/local-config.yaml
           volumeMounts:
             - name: config
               mountPath: /etc/loki
+            - name: storage
+              mountPath: /tmp/loki
+            - name: wal
+              mountPath: /wal
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3100
+            initialDelaySeconds: 45
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 3100
+            initialDelaySeconds: 45
       volumes:
         - name: config
           configMap:
             name: loki-config
+        - name: storage
+          emptyDir: {}
+        - name: wal
+          emptyDir: {}

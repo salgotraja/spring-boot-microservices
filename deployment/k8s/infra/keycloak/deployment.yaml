@@ -17,9 +17,6 @@ spec:
         - name: keycloak
           image: quay.io/keycloak/keycloak:24.0.2
           args: ["start-dev", "--import-realm", "--http-port=9191"]
-          volumeMounts:
-            - name: realm-config
-              mountPath: /opt/keycloak/data/import
           ports:
             - containerPort: 9191
           env:
@@ -35,6 +32,9 @@ spec:
                   key: KEYCLOAK_ADMIN_PASSWORD
             - name: KC_HTTP_PORT
               value: "9191"
+          volumeMounts:
+            - name: realm-config
+              mountPath: /opt/keycloak/data/import
       volumes:
         - name: realm-config
           configMap:

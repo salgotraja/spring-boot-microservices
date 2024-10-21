@@ -28,11 +28,13 @@ spec:
             - name: BOOKSTORE_API_GATEWAY_URL
               value: http://api-gateway:8989
             - name: OAUTH2_SERVER_URL
-              value: http://keycloak:9191
+              value: "http://keycloak:9191"
             - name: MANAGEMENT_TRACING_ENABLED
               value: "true"
             - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              value: http://tempo:9411
+              value: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI
+              value: "http://keycloak:9191/realms/bookstore"
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
