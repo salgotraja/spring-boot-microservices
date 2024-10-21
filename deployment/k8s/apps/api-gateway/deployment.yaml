@@ -28,7 +28,10 @@ spec:
             - name: MANAGEMENT_TRACING_ENABLED
               value: "true"
             - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              value: http://tempo:9411
+              value: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -41,3 +44,7 @@ spec:
               port: 8989
             initialDelaySeconds: 60
             periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: api-gateway-config
