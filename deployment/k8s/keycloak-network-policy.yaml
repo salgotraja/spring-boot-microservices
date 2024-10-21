@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-bookstore-webapp-to-keycloak
+  namespace: bookstore
+spec:
+  podSelector:
+    matchLabels:
+      app: keycloak
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: bookstore-webapp
+  policyTypes:
+    - Ingress
