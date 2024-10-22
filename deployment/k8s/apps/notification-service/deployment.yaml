@@ -59,10 +59,10 @@ spec:
               value: mailhog
             - name: MAIL_PORT
               value: "1025"
-            - name: MANAGEMENT_TRACING_ENABLED
-              value: "true"
-            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              value: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
+#            - name: MANAGEMENT_TRACING_ENABLED
+#              value: "true"
+#            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+#              value: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
