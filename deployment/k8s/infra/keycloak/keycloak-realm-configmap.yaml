@@ -657,9 +657,9 @@ data:
           "clientId": "bookstore-webapp",
           "name": "BookStore",
           "description": "",
-          "rootUrl": "http://localhost:8080",
-          "adminUrl": "http://localhost:8080",
-          "baseUrl": "http://localhost:8080",
+          "rootUrl": "http://bookstore.local:8080",
+          "adminUrl": "http://bookstore.local:8080",
+          "baseUrl": "http://bookstore.local:8080",
           "surrogateAuthRequired": false,
           "enabled": true,
           "alwaysDisplayInConsole": false,
@@ -667,9 +667,9 @@ data:
           "secret": "cWaxi5fTq5CRHP4uUJrmD6d54ianygxu",
           "redirectUris": [
             "http://localhost:8989/webjars/swagger-ui/oauth2-redirect.html",
-            "http://localhost:8080/login/oauth2/code/bookstore-webapp"],
+            "http://bookstore.local:8080/login/oauth2/code/bookstore-webapp"],
           "webOrigins": [
-            "http://localhost:8080",
+            "http://bookstore.local:8080",
             "http://localhost:8989"],
           "notBefore": 0,
           "bearerOnly": false,
@@ -685,7 +685,7 @@ data:
             "oidc.ciba.grant.enabled": "false",
             "client.secret.creation.time": "1728926346",
             "backchannel.logout.session.required": "true",
-            "post.logout.redirect.uris": "http://localhost:8080",
+            "post.logout.redirect.uris": "http://bookstore.local:8080",
             "oauth2.device.authorization.grant.enabled": "false",
             "display.on.consent.screen": "false",
             "backchannel.logout.revoke.offline.tokens": "false"
