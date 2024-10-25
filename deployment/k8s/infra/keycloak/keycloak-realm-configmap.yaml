@@ -666,11 +666,11 @@ data:
           "clientAuthenticatorType": "client-secret",
           "secret": "cWaxi5fTq5CRHP4uUJrmD6d54ianygxu",
           "redirectUris": [
-            "http://localhost:8989/webjars/swagger-ui/oauth2-redirect.html",
+            "http://api.bookstore.local:8989/webjars/swagger-ui/oauth2-redirect.html",
             "http://bookstore.local:8080/login/oauth2/code/bookstore-webapp"],
           "webOrigins": [
             "http://bookstore.local:8080",
-            "http://localhost:8989"],
+            "http://api.bookstore.local:8989"],
           "notBefore": 0,
           "bearerOnly": false,
           "consentRequired": false,
@@ -685,7 +685,7 @@ data:
             "oidc.ciba.grant.enabled": "false",
             "client.secret.creation.time": "1728926346",
             "backchannel.logout.session.required": "true",
-            "post.logout.redirect.uris": "http://bookstore.local:8080",
+            "post.logout.redirect.uris": "http://bookstore.local:8080/* http://bookstore.local/*",
             "oauth2.device.authorization.grant.enabled": "false",
             "display.on.consent.screen": "false",
             "backchannel.logout.revoke.offline.tokens": "false"

@@ -22,33 +22,9 @@ spec:
           image: salgotraja/bookstore-webapp
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: kubernetes
-            - name: BOOKSTORE_API_GATEWAY_URL
-              value: http://api-gateway:8989
-            - name: OAUTH2_SERVER_URL
-              value: "http://keycloak:9191"
-#            - name: MANAGEMENT_TRACING_ENABLED
-#              value: "true"
-#            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-#              value: http://tempo:9411
-            - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI
-              value: "http://keycloak:9191/realms/bookstore"
-            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_BOOKSTORE_WEBAPP_REDIRECT_URI
-              value: "http://bookstore.local:8080/login/oauth2/code/bookstore-webapp"
-            - name: SERVER_FORWARD_HEADERS_STRATEGY
-              value: "native"
-            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_BOOKSTORE_WEBAPP_BASE_URI
-              value: "http://bookstore.local:8080"
-            - name: SERVER_TOMCAT_REMOTE_IP_HEADER
-              value: "X-Forwarded-For"
-            - name: SERVER_TOMCAT_PROTOCOL_HEADER
-              value: "X-Forwarded-Proto"
-            - name: SERVER_TOMCAT_USE_FORWARDED_HEADERS
-              value: "true"
-            - name: SERVER_PORT
-              value: "8080"
+          envFrom:
+            - configMapRef:
+                name: bookstore-webapp-config
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

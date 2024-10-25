@@ -1,5 +1,6 @@
 package com.js.bookstore.webapp.config;
 
+import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -49,7 +50,16 @@ public class SecurityConfig {
     private LogoutSuccessHandler oidcLogoutSuccessHandler() {
         OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
                 new OidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository);
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        if (isKubernetesEnvironment()) {
+            oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}" + ":8080");
+        } else {
+            oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        }
         return oidcLogoutSuccessHandler;
+    }
+
+    private boolean isKubernetesEnvironment() {
+        return Optional.ofNullable(System.getenv("KUBERNETES_SERVICE_HOST")).isPresent()
+                || "kubernetes".equalsIgnoreCase(System.getenv("SPRING_PROFILES_ACTIVE"));
     }
 }

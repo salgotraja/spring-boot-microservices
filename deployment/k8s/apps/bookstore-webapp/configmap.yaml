@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bookstore-webapp-config
+  namespace: bookstore
+data:
+  SERVER_FORWARD_HEADERS_STRATEGY: "native"
+  SERVER_PORT: "8080"
+  KUBERNETES_FORCE_PORT: "true"
+  SERVER_TOMCAT_REMOTE_IP_HEADER: "X-Forwarded-For"
+  SERVER_TOMCAT_PROTOCOL_HEADER: "X-Forwarded-Proto"
+  SERVER_TOMCAT_USE_FORWARDED_HEADERS: "true"
+  SPRING_PROFILES_ACTIVE: "kubernetes"
+  BOOKSTORE_API_GATEWAY_URL: "http://api-gateway:8989"
+  OAUTH2_SERVER_URL: "http://keycloak:9191"
+  SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: "http://keycloak:9191/realms/bookstore"
+  SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_BOOKSTORE_WEBAPP_REDIRECT_URI: "http://bookstore.local:8080/login/oauth2/code/bookstore-webapp"
+#  MANAGEMENT_TRACING_ENABLED: "true"
+#  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo:9411"
