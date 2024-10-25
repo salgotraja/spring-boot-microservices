@@ -9,7 +9,7 @@ data:
 
     server:
       http_listen_port: 3100
-    
+
     ingester:
       lifecycler:
         address: 127.0.0.1
@@ -20,8 +20,9 @@ data:
       chunk_idle_period: 5m
       chunk_retain_period: 30s
       wal:
-        dir: /wal
-    
+        enabled: true
+        dir: /tmp/wal  # Changed from /wal to /tmp/wal
+
     schema_config:
       configs:
         - from: 2020-05-15
@@ -31,18 +32,16 @@ data:
           index:
             prefix: index_
             period: 24h
-    
+
     storage_config:
       boltdb:
         directory: /tmp/loki/index
       filesystem:
         directory: /tmp/loki/chunks
-    
+
     limits_config:
+      allow_structured_metadata: false
       reject_old_samples: true
       reject_old_samples_max_age: 168h
-      allow_structured_metadata: false
-    
-    table_manager:
-      retention_deletes_enabled: false
-      retention_period: 0s
+      ingestion_rate_mb: 32
+      ingestion_burst_size_mb: 64

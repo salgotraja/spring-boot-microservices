@@ -1,29 +1,39 @@
+# monitoring-namespace-policy.yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-all
+  name: monitoring-policy
   namespace: monitoring
 spec:
   podSelector: {}
-  ingress:
-    - {}
-  egress:
-    - {}
   policyTypes:
     - Ingress
     - Egress
+  ingress:
+    - from:
+        - namespaceSelector: {}  # Allow traffic from all namespaces
+  egress:
+    - to:
+        - namespaceSelector: {}  # Allow traffic to all namespaces
 ---
+# bookstore-namespace-policy.yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-al
+  name: bookstore-policy
   namespace: bookstore
 spec:
   podSelector: {}
-  ingress:
-    - {}
-  egress:
-    - {}
   policyTypes:
     - Ingress
     - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring

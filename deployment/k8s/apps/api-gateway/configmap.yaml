@@ -17,7 +17,7 @@ data:
               uri: http://order-service:8082
               predicates:
                 - Path=/orders/**
-#    management:
-#      zipkin:
-#        tracing:
-#          endpoint: http://tempo:9411
+    management:
+      zipkin:
+        tracing:
+          endpoint: http://tempo:9411

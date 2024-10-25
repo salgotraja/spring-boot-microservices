@@ -61,10 +61,10 @@ spec:
               value: http://keycloak:9191
             - name: SWAGGER_API_GATEWAY_URL
               value: http://api-gateway:8989/orders
-#            - name: MANAGEMENT_TRACING_ENABLED
-#              value: "true"
-#            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-#              value: http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans
+            - name: MANAGEMENT_TRACING_ENABLED
+              value: "true"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://tempo:9411
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

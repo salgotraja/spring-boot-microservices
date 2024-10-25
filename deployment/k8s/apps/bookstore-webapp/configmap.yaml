@@ -15,5 +15,5 @@ data:
   OAUTH2_SERVER_URL: "http://keycloak:9191"
   SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: "http://keycloak:9191/realms/bookstore"
   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_BOOKSTORE_WEBAPP_REDIRECT_URI: "http://bookstore.local:8080/login/oauth2/code/bookstore-webapp"
-#  MANAGEMENT_TRACING_ENABLED: "true"
-#  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo:9411"
+  MANAGEMENT_TRACING_ENABLED: "true"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.monitoring.svc.cluster.local:9411"

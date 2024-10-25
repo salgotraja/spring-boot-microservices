@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: promtail
   namespace: monitoring
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: promtail
@@ -13,7 +12,7 @@ spec:
       labels:
         app: promtail
     spec:
-      serviceAccountName: promtail
+      serviceAccount: promtail
       containers:
         - name: promtail
           image: grafana/promtail:3.0.0
@@ -22,19 +21,28 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/promtail
-            - name: docker
-              mountPath: /var/lib/docker/containers
-              readOnly: true
+            - name: positions
+              mountPath: /positions
             - name: pods
               mountPath: /var/log/pods
               readOnly: true
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - containerPort: 9080
+              name: http-metrics
+          securityContext:
+            privileged: true
+            runAsUser: 0
       volumes:
         - name: config
           configMap:
             name: promtail-config
-        - name: docker
-          hostPath:
-            path: /var/lib/docker/containers
+        - name: positions
+          emptyDir: {}
         - name: pods
           hostPath:
             path: /var/log/pods
