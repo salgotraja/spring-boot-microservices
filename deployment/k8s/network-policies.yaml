@@ -1,4 +1,3 @@
-# monitoring-namespace-policy.yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -11,12 +10,12 @@ spec:
     - Egress
   ingress:
     - from:
-        - namespaceSelector: {}  # Allow traffic from all namespaces
+        - namespaceSelector: {}
   egress:
     - to:
-        - namespaceSelector: {}  # Allow traffic to all namespaces
+        - namespaceSelector: {}
 ---
-# bookstore-namespace-policy.yaml
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

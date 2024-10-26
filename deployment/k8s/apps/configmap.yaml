@@ -6,6 +6,6 @@ metadata:
 data:
   SPRING_PROFILES_ACTIVE: "kubernetes"
   MANAGEMENT_TRACING_ENABLED: "true"
-  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo:9411"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.monitoring.svc.cluster.local:9411"
   BOOKSTORE_API_GATEWAY_URL: "http://api-gateway:8989"
   OAUTH2_SERVER_URL: "http://keycloak:9191"
