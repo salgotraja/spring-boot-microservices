@@ -4,9 +4,11 @@ metadata:
   name: keycloak
   namespace: bookstore
 spec:
+  type: NodePort
+  ports:
+    - port: 9191
+      targetPort: 9191
+      protocol: TCP
+      name: http
   selector:
     app: keycloak
-  ports:
-    - protocol: TCP
-      port: 9191
-      targetPort: 9191

@@ -13,23 +13,36 @@ spec:
     metadata:
       labels:
         app: notifications-db
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-status: 'update'
+        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/agent-inject-secret-database: 'secret/bookstore/database'
+        vault.hashicorp.com/agent-inject-template-database: |
+          {{- with secret "secret/bookstore/database" -}}
+          POSTGRES_USER={{ .Data.data.username }}
+          POSTGRES_PASSWORD={{ .Data.data.password }}
+          {{- end }}
     spec:
+      serviceAccountName: vault-auth
       containers:
         - name: postgres
           image: postgres:16-alpine
           env:
             - name: POSTGRES_DB
-              value: postgres
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
+              value: "notificationsdb"
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: postgresdb
               mountPath: /var/lib/postgresql/data
               subPath: postgres
+          command:
+            - "sh"
+            - "-c"
+            - |
+              source /vault/secrets/database
+              docker-entrypoint.sh postgres
   volumeClaimTemplates:
     - metadata:
         name: postgresdb

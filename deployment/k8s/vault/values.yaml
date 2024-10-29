@@ -1,0 +1,13 @@
+global:
+  enabled: true
+
+server:
+  dev:
+    enabled: true
+    devRootToken: "root"
+  service:
+    type: NodePort
+
+ui:
+  enabled: true
+  serviceType: NodePort

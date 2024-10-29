@@ -12,12 +12,36 @@ spec:
     metadata:
       labels:
         app: order-service
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-status: 'update'
+        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/agent-inject-secret-database: 'secret/bookstore/database'
+        vault.hashicorp.com/agent-inject-secret-rabbitmq: 'secret/bookstore/rabbitmq'
+        vault.hashicorp.com/agent-inject-template-database: |
+          {{- with secret "secret/bookstore/database" -}}
+          export DB_USERNAME="{{ .Data.data.username }}"
+          export DB_PASSWORD="{{ .Data.data.password }}"
+          {{- end }}
+        vault.hashicorp.com/agent-inject-template-rabbitmq: |
+          {{- with secret "secret/bookstore/rabbitmq" -}}
+          export RABBITMQ_USERNAME="{{ .Data.data.username }}"
+          export RABBITMQ_PASSWORD="{{ .Data.data.password }}"
+          {{- end }}
     spec:
+      serviceAccountName: vault-auth
       containers:
         - name: order-service
           image: salgotraja/bookstore-order-service
           ports:
             - containerPort: 8082
+          command:
+            - "sh"
+            - "-c"
+            - |
+              source /vault/secrets/database
+              source /vault/secrets/rabbitmq
+              java -jar /app.jar
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kubernetes
@@ -25,16 +49,6 @@ spec:
               value: http://api-gateway:8989/catalog
             - name: DB_URL
               value: jdbc:postgresql://orders-db:5432/postgres
-            - name: DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: DB_USERNAME
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: DB_PASSWORD
             - name: SPRING_FLYWAY_REPAIR_ON_MIGRATION_ERROR
               value: "true"
             - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
@@ -47,16 +61,6 @@ spec:
               value: bookstore-rabbitmq
             - name: RABBITMQ_PORT
               value: "5672"
-            - name: RABBITMQ_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: rabbitmq-secrets
-                  key: RABBITMQ_USERNAME
-            - name: RABBITMQ_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: rabbitmq-secrets
-                  key: RABBITMQ_PASSWORD
             - name: OAUTH2_SERVER_URL
               value: http://keycloak:9191
             - name: SWAGGER_API_GATEWAY_URL
