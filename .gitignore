@@ -34,5 +34,3 @@ build/
 
 deployment/k8s/secrets.yaml.old
 deployment/k8s/vault/agent-config.yaml.old
-deployment/k8s/vault/init-vault.sh
-deployment/k8s/helm
