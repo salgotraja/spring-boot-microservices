@@ -234,6 +234,7 @@ kubectl apply -f deployment/k8s/ingress/
 - Prometheus: http://localhost:9090 (via port-forward)
 - RabbitMQ Management: http://localhost:15672 (via port-forward)
 - Keycloak Admin: http://localhost:9191 (via port-forward)
+- Mailhog: http://localhost:8025/ (via port-forward)
 
 ## Host File Configuration
 Add these entries to your /etc/hosts file:
@@ -293,13 +294,13 @@ kubectl logs -f -n bookstore catalog-db-0
 ```bash
 kubectl get pods -n bookstore -l app=rabbitmq
 
-kubectl port-forward -n bookstore service/rabbitmq 15672:15672
+kubectl port-forward -n bookstore service/rabbitmq 15672:15672 &
 ```
 
 ## Keycloak Operations
 ```bash
 kubectl get pods -n bookstore -l app=keycloak 
-kubectl port-forward -n bookstore service/keycloak 9191:9191
+kubectl port-forward -n bookstore service/keycloak 9191:9191 &
 
 kubectl logs -f -n bookstore -l app=keycloak
 ```
@@ -309,7 +310,7 @@ kubectl logs -f -n bookstore -l app=keycloak
 kubectl get pods -n monitoring
 kubectl get services -n monitoring
 
-kubectl port-forward -n monitoring service/prometheus 9090:9090
+kubectl port-forward -n monitoring service/prometheus 9090:9090 &
 
 kubectl logs -f -n monitoring -l app=loki
 ```

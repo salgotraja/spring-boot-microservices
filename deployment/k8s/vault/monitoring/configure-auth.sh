@@ -15,7 +15,7 @@ echo "Creating monitoring policy..."
 
 cat << POLICY > /tmp/monitoring-policy.hcl
 path "secret/data/monitoring/*" {
-  capabilities = ["read"]
+  capabilities = ["read", "list"]
 }
 POLICY
 
@@ -27,7 +27,7 @@ vault write auth/kubernetes/role/monitoring-role \
     bound_service_account_names=vault-auth \
     bound_service_account_namespaces=monitoring \
     policies=monitoring-policy \
-    ttl=1h
+    ttl=24h
 
 echo "Vault configuration completed for monitoring namespace"
 EOF

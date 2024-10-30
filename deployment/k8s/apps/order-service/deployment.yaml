@@ -35,13 +35,6 @@ spec:
           image: salgotraja/bookstore-order-service
           ports:
             - containerPort: 8082
-          command:
-            - "sh"
-            - "-c"
-            - |
-              source /vault/secrets/database
-              source /vault/secrets/rabbitmq
-              java -jar /app.jar
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kubernetes

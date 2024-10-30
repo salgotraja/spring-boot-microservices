@@ -18,6 +18,7 @@ spec:
         vault.hashicorp.com/agent-inject-status: 'update'
         vault.hashicorp.com/role: 'app-role'
         vault.hashicorp.com/agent-inject-secret-database: 'secret/bookstore/database'
+        vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/agent-inject-template-database: |
           {{- with secret "secret/bookstore/database" -}}
           POSTGRES_USER={{ .Data.data.username }}
@@ -41,8 +42,10 @@ spec:
             - "sh"
             - "-c"
             - |
-              source /vault/secrets/database
-              docker-entrypoint.sh postgres
+              set -a
+              . /vault/secrets/database
+              set +a
+              exec docker-entrypoint.sh postgres
   volumeClaimTemplates:
     - metadata:
         name: postgresdb

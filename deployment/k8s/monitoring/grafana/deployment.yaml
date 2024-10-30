@@ -14,27 +14,33 @@ spec:
         app: grafana
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-status: 'update'
         vault.hashicorp.com/role: 'app-role'
         vault.hashicorp.com/agent-inject-secret-grafana: 'secret/monitoring/grafana'
+        vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/agent-inject-template-grafana: |
-          {{ with secret "secret/monitoring/grafana" }}
-          RABBITMQ_DEFAULT_USER={{ .Data.data.username }}
-          RABBITMQ_DEFAULT_PASS={{ .Data.data.password }}
-          {{ end }}
-        vault.hashicorp.com/agent-inject-command-rabbitmq: "source /vault/secrets/grafana"
+          {{- with secret "secret/monitoring/grafana" -}}
+          GF_SECURITY_ADMIN_USER={{ .Data.data.admin }}
+          GF_SECURITY_ADMIN_PASSWORD={{ .Data.data.password }}
+          {{- end }}
     spec:
+      serviceAccountName: vault-auth
       containers:
         - name: grafana
           image: grafana/grafana:10.4.2
           ports:
             - containerPort: 3000
-#          env:
-#            - name: GF_SECURITY_ADMIN_USER
-#              value: admin
-#            - name: GF_SECURITY_ADMIN_PASSWORD
-#              value: admin123
-#            - name: GF_USERS_ALLOW_SIGN_UP
-#              value: "false"
+          command:
+            - "sh"
+            - "-c"
+            - |
+              set -a
+              . /vault/secrets/grafana
+              set +a
+              exec /run.sh
+          env:
+            - name: GF_USERS_ALLOW_SIGN_UP
+              value: "false"
           volumeMounts:
             - name: grafana-storage
               mountPath: /var/lib/grafana

@@ -7,7 +7,17 @@ server:
     devRootToken: "root"
   service:
     type: NodePort
+  postStart:
+    - /bin/sh
+    - -c
+    - |
+      sleep 5
+      vault secrets enable -path=secret kv-v2
+      vault auth enable kubernetes
 
 ui:
   enabled: true
   serviceType: NodePort
+
+injector:
+  enabled: true
