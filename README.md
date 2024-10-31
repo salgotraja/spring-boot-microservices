@@ -100,6 +100,7 @@ This ensures that local development closely matches production deployments while
 - Kind (Kubernetes in Docker)
 - kubectl
 - Helm (for HashiCorp Vault installation)
+- jq (for script usage)
 
 # Service Architecture
 
@@ -185,9 +186,21 @@ kubectl apply -f deployment/k8s/network-policies.yaml
 cd deployment/helm
 ./install-vault.sh
 
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=vault --namespace bookstore --timeout=300s
+
 ./deployment/k8s/vault/setup-all.sh
 
 kubectl get pods -n bookstore -l app.kubernetes.io/name=vault
+
+- Verify Vault configuration
+kubectl exec -it vault-0 -n bookstore -- sh
+- Inside pod:
+export VAULT_TOKEN="root"
+vault auth list
+vault policy list
+vault read auth/kubernetes/role/bookstore-role
+vault read auth/kubernetes/role/monitoring-role
+exit
 
 ```
 
@@ -198,14 +211,26 @@ kubectl apply -f deployment/k8s/monitoring/loki/
 kubectl apply -f deployment/k8s/monitoring/tempo/ 
 kubectl apply -f deployment/k8s/monitoring/grafana/ 
 kubectl apply -f deployment/k8s/monitoring/promtail/
+
+- Verify monitoring pods
+kubectl get pods -n monitoring --watch
+kubectl wait --for=condition=ready pod --all -n monitoring --timeout=300s
 ```
+
 
 ### 2.5 Deploy infrastructure services
 ```bash
 kubectl apply -f deployment/k8s/infra/keycloak/ 
+kubectl wait --for=condition=ready pod -l app=keycloak -n bookstore --timeout=300s
+
 kubectl apply -f deployment/k8s/infra/postgres/ 
+kubectl wait --for=condition=ready pod -l app=catalog-db -n bookstore --timeout=300s
+
 kubectl apply -f deployment/k8s/infra/rabbitmq/ 
+kubectl wait --for=condition=ready pod -l app=rabbitmq -n bookstore --timeout=300s
+
 kubectl apply -f deployment/k8s/infra/mailhog/
+kubectl wait --for=condition=ready pod -l app=mailhog -n bookstore --timeout=300s
 ```
 
 ### 2.6 Deploy microservices
@@ -215,11 +240,24 @@ kubectl apply -f deployment/k8s/apps/catalog-service/
 kubectl apply -f deployment/k8s/apps/order-service/ 
 kubectl apply -f deployment/k8s/apps/notification-service/ 
 kubectl apply -f deployment/k8s/apps/bookstore-webapp/
+
+kubectl wait --for=condition=ready pod --all -n bookstore --timeout=300s
 ```
 
 ### 2.7 Apply ingress configurations
 ```bash
 kubectl apply -f deployment/k8s/ingress/
+```
+
+### 2.8 Port forwarding script to access services
+```
+chmod +x deployment/scripts/port-forward.sh
+
+./deployment/scripts/port-forward.sh start
+
+./deployment/scripts/port-forward.sh status
+
+./deployment/scripts/port-forward.sh stop
 ```
 
 # Application Access
@@ -305,6 +343,14 @@ kubectl port-forward -n bookstore service/keycloak 9191:9191 &
 kubectl logs -f -n bookstore -l app=keycloak
 ```
 
+## Mailhog Operations
+```bash
+kubectl get pods -n bookstore -l app=mailhog 
+kubectl port-forward -n bookstore svc/mailhog 8025:8025 &
+
+kubectl logs -f -n bookstore -l app=mailhog
+```
+
 ## Monitoring Stack Management
 ```bash
 kubectl get pods -n monitoring
@@ -361,16 +407,37 @@ kubectl rollout restart deployment -n bookstore catalog-service order-service no
 ```bash
 pkill -f 'kubectl port-forward.*vault.*8200:8200'
 
-# Destroy cluster
+./deployment/scripts/port-forward.sh stop
+
+- Destroy cluster
 cd deployment/kind
 ./destroy-cluster.sh
 ```
 
-# Security Notes
+## Security Considerations
+### Vault Security
+
+- Use production-grade authentication in non-dev environments
+- Rotate root token regularly
+- Enable audit logging
+- Use namespaced policies
+
+## Network Security
+
+- Use network policies to restrict pod communication
+- Enable mTLS between services
+- Use secure ingress with TLS
+- Regular security scanning of images
+
+# Secrets Management
 - Don't commit Vault initialization scripts in repository
 - Keep Vault token secure
 - Add to .gitignore:
   ```
   deployment/k8s/vault/init-vault.sh
   deployment/k8s/vault/values.yaml
+  *.key
+  *.pem
+  *.crt
+  .env
   ```

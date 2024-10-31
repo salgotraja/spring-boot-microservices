@@ -6,5 +6,8 @@ metadata:
 data:
   policy.hcl: |
     path "secret/data/monitoring/*" {
-      capabilities = ["read"]
+      capabilities = ["read", "list"]
+    }
+    path "secret/metadata/monitoring/*" {
+      capabilities = ["read", "list"]
     }

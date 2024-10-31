@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if ! pgrep -f "kubectl port-forward.*vault.*8200:8200" > /dev/null; then
     echo "Starting Vault port-forward..."
     kubectl port-forward -n bookstore svc/vault 8200:8200 &
@@ -43,12 +45,42 @@ store_secret() {
     shift
     echo "Storing secret at: secret/bookstore/$path"
     if vault kv put "secret/bookstore/$path" "$@"; then
-        echo "✓ Successfully stored secret at: secret/bookstore/$path"
+        if vault kv get "secret/bookstore/$path" >/dev/null 2>&1; then
+            echo "✓ Successfully stored and verified secret at: secret/bookstore/$path"
+        else
+            echo "✗ Failed to verify secret at: secret/bookstore/$path"
+            exit 1
+        fi
     else
         echo "✗ Failed to store secret at: secret/bookstore/$path"
         exit 1
     fi
 }
+
+# Verify Vault is configured properly for the namespace
+verify_vault_config() {
+    echo "Verifying Vault configuration for bookstore..."
+
+    # Verify policy exists
+    if ! vault policy read bookstore-policy >/dev/null 2>&1; then
+        echo "✗ bookstore-policy not found"
+        return 1
+    fi
+
+    # Verify role exists
+    if ! vault read auth/kubernetes/role/bookstore-role >/dev/null 2>&1; then
+        echo "✗ bookstore-role not found"
+        return 1
+    fi
+
+    echo "✓ Vault configuration verified"
+    return 0
+}
+
+if ! verify_vault_config; then
+    echo "Vault configuration verification failed. Running configure-auth.sh..."
+    bash $(dirname "$0")/configure-auth.sh
+fi
 
 store_secret "database" \
     username="postgres" \

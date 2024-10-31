@@ -14,8 +14,7 @@ spec:
         app: grafana
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/agent-inject-status: 'update'
-        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/role: 'monitoring-role'
         vault.hashicorp.com/agent-inject-secret-grafana: 'secret/monitoring/grafana'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/agent-inject-template-grafana: |

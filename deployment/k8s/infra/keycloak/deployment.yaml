@@ -14,8 +14,7 @@ spec:
         app: keycloak
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/agent-inject-status: 'update'
-        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/role: 'bookstore-role'
         vault.hashicorp.com/agent-inject-secret-keycloak: 'secret/bookstore/keycloak'
         vault.hashicorp.com/agent-inject-template-keycloak: |
           {{- with secret "secret/bookstore/keycloak" -}}

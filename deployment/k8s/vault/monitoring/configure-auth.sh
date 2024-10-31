@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 VAULT_ADDR=${VAULT_ADDR:-"http://localhost:8200"}
 VAULT_TOKEN=${VAULT_TOKEN:-"root"}
 
@@ -9,12 +11,16 @@ export VAULT_TOKEN
 echo "Configuring Vault authentication for monitoring namespace..."
 
 kubectl exec -i vault-0 -n bookstore -- sh << 'EOF'
+set -e
 export VAULT_TOKEN="root"
 
 echo "Creating monitoring policy..."
 
 cat << POLICY > /tmp/monitoring-policy.hcl
 path "secret/data/monitoring/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/metadata/monitoring/*" {
   capabilities = ["read", "list"]
 }
 POLICY
@@ -28,6 +34,8 @@ vault write auth/kubernetes/role/monitoring-role \
     bound_service_account_namespaces=monitoring \
     policies=monitoring-policy \
     ttl=24h
+
+vault read auth/kubernetes/role/monitoring-role
 
 echo "Vault configuration completed for monitoring namespace"
 EOF

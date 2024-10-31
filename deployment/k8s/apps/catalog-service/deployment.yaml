@@ -14,8 +14,7 @@ spec:
         app: catalog-service
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/agent-inject-status: 'update'
-        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/role: 'bookstore-role'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/agent-inject-secret-database: 'secret/bookstore/database'
         vault.hashicorp.com/agent-inject-template-database: |

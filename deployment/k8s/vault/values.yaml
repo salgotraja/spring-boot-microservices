@@ -11,9 +11,13 @@ server:
     - /bin/sh
     - -c
     - |
-      sleep 5
-      vault secrets enable -path=secret kv-v2
-      vault auth enable kubernetes
+      sleep 10
+      until vault status > /dev/null 2>&1; do
+        echo "Waiting for Vault to become ready..."
+        sleep 2
+      done
+      vault secrets enable -path=secret kv-v2 || true
+      vault auth enable kubernetes || true
 
 ui:
   enabled: true
