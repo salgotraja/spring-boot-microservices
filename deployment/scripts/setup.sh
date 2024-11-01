@@ -24,6 +24,7 @@ check_cluster() {
         log "INFO" "Creating new Kind cluster..." "$YELLOW"
         cd deployment/kind && ./create-cluster.sh
         cd ../..
+        echo -e "Current directory: $(pwd)"
     else
         log "INFO" "Kind cluster already exists" "$YELLOW"
     fi
