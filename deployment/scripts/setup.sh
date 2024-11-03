@@ -148,42 +148,55 @@ setup_base_infrastructure() {
 setup_vault() {
     log "INFO" "Setting up HashiCorp Vault..." "$YELLOW"
 
-    pkill -f "kubectl port-forward.*vault.*8200:8200" ||  true
+    pkill -f "kubectl port-forward.*vault.*8200:8200" || true
     sleep 2
 
-    bash "${PROJECT_ROOT}/deployment/helm/install-vault.sh" || {
-        log "ERROR" "Vault installation failed" "$RED"
-        exit 1
-    }
-    check_previous_step "vault-install"
+    bash "${PROJECT_ROOT}/deployment/helm/install-vault.sh"
+    check_previous_step "vault-helm-install"
 
-    log "INFO" "Waiting for Vault StatefulSet to be created..." "$YELLOW"
-    sleep 10
-
-    log "INFO" "Waiting for Vault pod to be ready..." "$YELLOW"
-    local retries=3
+    log "INFO" "Waiting for Vault StatefulSet..." "$YELLOW"
+    local retries=6
     local retry=0
-    local success=false
-
     while [ $retry -lt $retries ]; do
-        if kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=vault -n bookstore --timeout=${KUBECTL_TIMEOUT}; then
-            success=true
+        if kubectl get statefulset vault -n bookstore 2>/dev/null; then
             break
         fi
         retry=$((retry + 1))
-        if [ $retry -lt $retries ]; then
-            log "WARN" "Retry $retry/$retries: Waiting for Vault pod..." "$YELLOW"
+        log "INFO" "Waiting for Vault StatefulSet to be created (${retry}/${retries})..." "$YELLOW"
+        sleep 10
+    done
+
+    if [ $retry -eq $retries ]; then
+        log "ERROR" "Vault StatefulSet was not created" "$RED"
+        exit 1
+    fi
+
+    log "INFO" "Waiting for Vault pod to be ready..." "$YELLOW"
+    local pod_retries=6
+    local pod_retry=0
+    local success=false
+
+    while [ $pod_retry -lt $pod_retries ]; do
+        if kubectl -n bookstore get pod vault-0 2>/dev/null; then
+            if kubectl wait --for=condition=ready pod vault-0 -n bookstore --timeout=${KUBECTL_TIMEOUT}; then
+                success=true
+                break
+            fi
+        fi
+        pod_retry=$((pod_retry + 1))
+        if [ $pod_retry -lt $pod_retries ]; then
+            log "INFO" "Waiting for Vault pod to be ready (${pod_retry}/${pod_retries})..." "$YELLOW"
             sleep 20
         fi
     done
 
     if [ "$success" = false ]; then
-        log "ERROR" "Failed to initialize Vault after $retries attempts" "$RED"
+        log "ERROR" "Failed to initialize Vault after $pod_retries attempts" "$RED"
+        kubectl describe pod vault-0 -n bookstore
         exit 1
     fi
 
-    log "INFO" "Waiting for Vault to be fully initialized..." "$YELLOW"
-    sleep 15
+    log "INFO" "Vault pod is ready" "$GREEN"
 
     log "INFO" "Configuring Vault..." "$YELLOW"
     bash "${PROJECT_ROOT}/deployment/k8s/vault/setup-all.sh"
