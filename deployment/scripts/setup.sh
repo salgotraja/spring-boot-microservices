@@ -282,6 +282,17 @@ forward_port() {
    fi
 }
 
+add_host() {
+    if [ -f "${SCRIPT_DIR}/manage-hosts.sh" ]; then
+        log "INFO" "Setting up host entries..." "$YELLOW"
+        "${SCRIPT_DIR}/manage-hosts.sh" remove &>/dev/null || true
+        sleep 2
+        if ! "${SCRIPT_DIR}/manage-hosts.sh" add; then
+            log "WARN" "Adding host entries failed but continuing..." "$YELLOW"
+        fi
+    fi
+}
+
 main() {
    mkdir -p "${LOG_DIR}"
    exec &> >(tee -a "${LOG_FILE}")
@@ -297,6 +308,7 @@ main() {
    setup_applications
    setup_ingress
    verify_deployment
+   add_host
 
    forward_port
 
