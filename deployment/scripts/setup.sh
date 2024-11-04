@@ -40,15 +40,27 @@ update_progress() {
 }
 
 
+#cleanup() {
+#    local exit_code=$?
+#    if [ $exit_code -ne 0 ]; then
+#        log "ERROR" "Script failed - check logs for details" "$RED"
+#    fi
+#
+#    if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
+#        log "INFO" "Cleaning up port forwards..." "$YELLOW"
+#        "${SCRIPT_DIR}/port-forward.sh" stop || true
+#    fi
+#}
+
 cleanup() {
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
         log "ERROR" "Script failed - check logs for details" "$RED"
-    fi
 
-    if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
-        log "INFO" "Cleaning up port forwards..." "$YELLOW"
-        "${SCRIPT_DIR}/port-forward.sh" stop || true
+        if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
+            log "INFO" "Cleaning up port forwards..." "$YELLOW"
+            "${SCRIPT_DIR}/port-forward.sh" stop || true
+        fi
     fi
 }
 
@@ -272,7 +284,17 @@ verify_deployment() {
    fi
 }
 
-# Main function
+forward_port() {
+  if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
+       log "INFO" "Starting port forwarding..." "$YELLOW"
+       "${SCRIPT_DIR}/port-forward.sh" stop &>/dev/null || true
+       sleep 2
+       if ! "${SCRIPT_DIR}/port-forward.sh" start; then
+           log "WARN" "Port forwarding failed but continuing..." "$YELLOW"
+       fi
+   fi
+}
+
 main() {
    mkdir -p "${LOG_DIR}"
    exec &> >(tee -a "${LOG_FILE}")
@@ -289,14 +311,7 @@ main() {
    setup_ingress
    verify_deployment
 
-   if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
-       log "INFO" "Starting port forwarding..." "$YELLOW"
-       "${SCRIPT_DIR}/port-forward.sh" stop &>/dev/null || true
-       sleep 2
-       if ! "${SCRIPT_DIR}/port-forward.sh" start; then
-           log "WARN" "Port forwarding failed but continuing..." "$YELLOW"
-       fi
-   fi
+   forward_port
 
    log "SUCCESS" "Setup completed successfully!" "$GREEN"
 
