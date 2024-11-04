@@ -57,17 +57,14 @@ store_secret() {
     fi
 }
 
-# Verify Vault is configured properly for the namespace
 verify_vault_config() {
     echo "Verifying Vault configuration for bookstore..."
 
-    # Verify policy exists
     if ! vault policy read bookstore-policy >/dev/null 2>&1; then
         echo "✗ bookstore-policy not found"
         return 1
     fi
 
-    # Verify role exists
     if ! vault read auth/kubernetes/role/bookstore-role >/dev/null 2>&1; then
         echo "✗ bookstore-role not found"
         return 1

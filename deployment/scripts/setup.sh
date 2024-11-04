@@ -39,19 +39,6 @@ update_progress() {
    fi
 }
 
-
-#cleanup() {
-#    local exit_code=$?
-#    if [ $exit_code -ne 0 ]; then
-#        log "ERROR" "Script failed - check logs for details" "$RED"
-#    fi
-#
-#    if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
-#        log "INFO" "Cleaning up port forwards..." "$YELLOW"
-#        "${SCRIPT_DIR}/port-forward.sh" stop || true
-#    fi
-#}
-
 cleanup() {
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then

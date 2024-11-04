@@ -44,7 +44,6 @@ vault write auth/kubernetes/role/bookstore-role \
     policies=bookstore-policy \
     ttl=24h
 
-# Verify configuration
 vault read auth/kubernetes/role/bookstore-role
 
 echo "Vault configuration completed for bookstore namespace"

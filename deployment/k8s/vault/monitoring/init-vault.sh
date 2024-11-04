@@ -53,13 +53,11 @@ store_monitoring_secret() {
 verify_vault_config() {
     echo "Verifying Vault configuration for monitoring..."
 
-    # Verify policy exists
     if ! vault policy read monitoring-policy >/dev/null 2>&1; then
         echo "✗ monitoring-policy not found"
         return 1
     fi
 
-    # Verify role exists
     if ! vault read auth/kubernetes/role/monitoring-role >/dev/null 2>&1; then
         echo "✗ monitoring-role not found"
         return 1
@@ -69,7 +67,6 @@ verify_vault_config() {
     return 0
 }
 
-# Verify configuration before proceeding
 if ! verify_vault_config; then
     echo "Vault configuration verification failed. Running configure-auth.sh..."
     bash $(dirname "$0")/configure-auth.sh
