@@ -5,6 +5,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 log() {
     local level=$1
     local msg=$2
@@ -20,24 +22,15 @@ check_command() {
 }
 
 cleanup_port_forwards() {
-    log "INFO" "Cleaning up port-forward processes..." "$YELLOW"
-
-    pkill -f "kubectl port-forward" || true
-
-    if [ -f /tmp/bookstore-port-forward.pid ]; then
-        while IFS=: read -r service pid; do
-            if kill -0 $pid 2>/dev/null; then
-                kill $pid
-                log "INFO" "Stopped port-forward for $service (PID: $pid)" "$GREEN"
-            fi
-        done < /tmp/bookstore-port-forward.pid
-        rm -f /tmp/bookstore-port-forward.pid
+    if [ -f "${SCRIPT_DIR}/port-forward.sh" ]; then
+        log "INFO" "Cleaning up port forwards..." "$YELLOW"
+        "${SCRIPT_DIR}/port-forward.sh" stop || true
     fi
 }
 
 remove_kind_cluster() {
     log "INFO" "Removing Kind cluster..." "$YELLOW"
-    if kind delete cluster 2>/dev/null; then
+    if kind delete cluster --name bookstore 2>/dev/null; then
         log "INFO" "Kind cluster deleted successfully" "$GREEN"
     else
         log "WARN" "No Kind cluster found or error deleting cluster" "$YELLOW"
@@ -46,52 +39,36 @@ remove_kind_cluster() {
 
 cleanup_docker() {
     log "INFO" "Cleaning up Docker resources..." "$YELLOW"
-
-    docker ps -a | grep 'kind-' | awk '{print $1}' | xargs -r docker rm -f
-
-    docker images | grep 'kind-' | awk '{print $3}' | xargs -r docker rmi -f
-
+    docker ps -a | grep 'bookstore-' | awk '{print $1}' | xargs -r docker rm -f
+    docker images | grep 'bookstore-' | awk '{print $3}' | xargs -r docker rmi -f
     log "INFO" "Docker cleanup completed" "$GREEN"
 }
 
 cleanup_kubectl_config() {
     log "INFO" "Cleaning kubectl configuration..." "$YELLOW"
-
     kubectl config unset contexts.kind-kind 2>/dev/null || true
     kubectl config unset clusters.kind-kind 2>/dev/null || true
     kubectl config unset users.kind-kind 2>/dev/null || true
-
     if [ "$(kubectl config current-context 2>/dev/null)" = "kind-kind" ]; then
         kubectl config unset current-context
     fi
-
     log "INFO" "Kubectl configuration cleaned" "$GREEN"
 }
 
 cleanup_temp_files() {
     log "INFO" "Cleaning temporary files..." "$YELLOW"
-
     rm -f /tmp/vault-portforward.pid 2>/dev/null || true
     rm -f /tmp/bookstore-port-forward.pid 2>/dev/null || true
-
     log "INFO" "Temporary files cleaned" "$GREEN"
 }
 
-#cleanup_hosts() {
-#    log "INFO" "Cleaning up host entries..." "$YELLOW"
-#    sudo "$(dirname "$0")/manage-hosts.sh" remove
-#}
-
 cleanup_hosts() {
     log "INFO" "Checking /etc/hosts entries..." "$YELLOW"
-
     if [ "$EUID" -eq 0 ]; then
         cp /etc/hosts /etc/hosts.bak
-
         sed -i '/bookstore.local/d' /etc/hosts
         sed -i '/api.bookstore.local/d' /etc/hosts
         sed -i '/grafana.local/d' /etc/hosts
-
         log "INFO" "Removed local domain entries from /etc/hosts" "$GREEN"
     else
         log "WARN" "Not running as root. Please manually remove entries from /etc/hosts:" "$YELLOW"
