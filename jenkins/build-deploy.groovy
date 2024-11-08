@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+package jenkins
 
 pipeline {
     agent any
