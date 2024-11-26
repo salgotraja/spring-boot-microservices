@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 
 const SignIn = () => {
-  return <div>Sign In</div>;
+  return <div>Auth</div>;
 };
 
 export default SignIn;
